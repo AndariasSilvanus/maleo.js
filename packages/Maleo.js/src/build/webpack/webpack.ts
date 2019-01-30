@@ -10,6 +10,7 @@ import {
   NoEmitOnErrorsPlugin,
   BannerPlugin,
 } from 'webpack';
+import fs from 'fs';
 
 // Webpack Optimizations Plugin
 import TerserPlugin from 'terser-webpack-plugin';
@@ -35,6 +36,9 @@ import {
   SERVER_ASSETS_ROUTE,
   MALEO_PROJECT_ROOT_NODE_MODULES,
   PROJECT_ROOT_NODE_MODULES,
+  MALEO_DOCUMENT_COMPONENT,
+  MALEO_WRAP_COMPONENT,
+  MALEO_APP_COMPONENT,
 } from '@src/constants/index';
 import {
   Context,
@@ -181,9 +185,36 @@ export const createWebpackConfig = (context: Context, customConfig: CustomConfig
 export const getDefaultEntry = (context: BuildContext): Configuration['entry'] => {
   const { isServer, projectDir } = context;
 
+  const checkFileExist = (filename: string): boolean => {
+    const extensions: string[] = ['.js', '.jsx', '.ts', '.tsx'];
+    let found = false;
+    extensions.map((e) => {
+      if (fs.existsSync(path.join(projectDir, `${filename}${e}`))) {
+        found = true;
+      }
+    });
+    return found;
+  };
+
+  const createFileEntry = (filename: string): string => path.join(projectDir, filename);
+
+  const wrap: string[] = [createFileEntry(MALEO_WRAP_COMPONENT)];
+  const document: string[] = [createFileEntry(MALEO_DOCUMENT_COMPONENT)];
+  const app: string[] = [createFileEntry(MALEO_APP_COMPONENT)];
+
   if (isServer) {
+    // return {
+    //   server: path.join(projectDir, SERVER_ENTRY_NAME),
+    // };
     return {
-      server: path.join(projectDir, SERVER_ENTRY_NAME),
+      server: [path.join(projectDir, SERVER_ENTRY_NAME)],
+      ...(checkFileExist(MALEO_WRAP_COMPONENT) && {
+        wrap,
+      }),
+      ...(checkFileExist(MALEO_DOCUMENT_COMPONENT) && {
+        document,
+      }),
+      ...(checkFileExist(MALEO_APP_COMPONENT) && { app }),
     };
   }
 
@@ -193,6 +224,11 @@ export const getDefaultEntry = (context: BuildContext): Configuration['entry'] =
       require.resolve('react-hot-loader/patch'),
       path.join(projectDir, CLIENT_ENTRY_NAME),
     ],
+    ...(checkFileExist(MALEO_WRAP_COMPONENT) && { wrap }),
+    ...(checkFileExist(MALEO_DOCUMENT_COMPONENT) && {
+      document,
+    }),
+    ...(checkFileExist(MALEO_APP_COMPONENT) && { app }),
   };
 };
 
@@ -398,7 +434,7 @@ export const getDefaultOutput = (context: BuildContext): Configuration['output']
   if (isServer) {
     return {
       filename: '[name].js',
-      path: path.resolve(projectDir, buildDirectory),
+      path: path.resolve(projectDir, buildDirectory, 'server'),
     };
   }
 
@@ -409,6 +445,7 @@ export const getDefaultOutput = (context: BuildContext): Configuration['output']
     chunkFilename: isDev ? '[name].js' : '[name]-[hash].js',
     filename: isDev ? '[name]' : '[name]-[hash]',
     library: '[name]',
+    // libraryTarget: 'commonjs2',
 
     // hotUpdateChunkFilename: 'hot/hot-update.js',
     // hotUpdateMainFilename: 'hot/hot-update.json',
@@ -431,6 +468,8 @@ export const loadUserConfig = (dir: string): CustomConfig => {
         ...defaultUserConfig,
         ...userConfig,
       };
+    } else {
+      console.log('[User didnt define their own config]');
     }
 
     return defaultUserConfig;
@@ -438,6 +477,8 @@ export const loadUserConfig = (dir: string): CustomConfig => {
     if (err.code !== 'MODULE_NOT_FOUND') {
       console.log('[Webpack] Using Default Config');
     }
+    console.log('[ERROR] Error occured when system tried to get user config, error:', err);
+
     return defaultUserConfig;
   }
 };

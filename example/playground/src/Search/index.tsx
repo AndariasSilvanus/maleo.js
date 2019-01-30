@@ -34,7 +34,7 @@ export class RoomsSearch extends React.Component<any, any> {
         <br />
         <br />
         <br />
-        <DetailComponent />
+        {/* <DetailComponent /> */}
       </div>
     );
   }

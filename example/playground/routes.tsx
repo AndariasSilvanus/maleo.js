@@ -9,14 +9,16 @@ const Loading = () => <div>Loading ...</div>;
 // console.log('RoomsMainApp', RoomsMainApp, RoomsMainApp.prototype, typeof RoomsMainApp);
 // console.log('Dynamic Component', (() => import('./src/Detail')).prototype);
 
+// import Dynamic from 'react-loadable'
+
 const RoomsSearch = Dynamic({
-  loader: () => import('./src/Search' /* webpackChunkName:"Search" */),
+  loader: () => import('./src/Search'),
   loading: Loading,
   modules: ['./src/Search'],
 });
 
 const RoomsDetail = Dynamic({
-  loader: () => import('./src/Detail' /* webpackChunkName:"Detail" */),
+  loader: () => import('./src/Detail'),
   loading: Loading,
   modules: ['./src/Detail'],
 });

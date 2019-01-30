@@ -80,9 +80,12 @@ export type AsyncRouteableComponent<Props = any> =
 
 export interface AsyncRouteProps<Props = any> extends RouteProps {
   key?: string;
-  routes?: Array<AsyncRouteProps<Props>>;
+  routes?: AsyncRouteProps<Props>[];
   redirectTo?: string;
   component: AsyncRouteableComponent<Props>;
+  path?: string;
+  exact?: boolean;
+  render?: (arg: any) => AsyncRouteableComponent;
 }
 
 export interface InitialProps {
@@ -131,3 +134,8 @@ export interface RenderPageParams {
 export type ModPageFn = <Props>(
   Page: React.ComponentType<Props>,
 ) => (props: Props) => React.ReactElement<Props>;
+
+export interface RenderStaticParam {
+  Document?: typeof React.Component;
+  Page: React.Component;
+}

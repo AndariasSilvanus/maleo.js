@@ -103,10 +103,10 @@ export class Server {
 
   private setupDevServer = (app: Express) => {
     // Webpack Dev Server
-    const { getConfigs } = requireRuntime(path.resolve(__dirname, '../build/index'));
+    const { getConfigs, getUserConfig } = requireRuntime(path.resolve(__dirname, '../build/index'));
     const webpack = requireRuntime('webpack');
 
-    const configs = getConfigs({ env: 'development' });
+    const configs = getConfigs({ env: 'development' }, getUserConfig());
     const multiCompiler = webpack(configs);
 
     const [clientCompiler] = multiCompiler.compilers;

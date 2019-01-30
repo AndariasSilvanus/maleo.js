@@ -18,7 +18,7 @@ export const init = async (routes, mod, { Wrap = DefaultWrap, App = DefaultApp }
 
   const RenderApp = hot(mod)(() => (
     <Wrap {...wrapProps}>
-      <App data={data} routes={routes} {...appProps} {...wrapProps} />
+      <App data={data} routes={routes} location={location} {...appProps} {...wrapProps} />
     </Wrap>
   ));
 

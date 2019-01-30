@@ -47,7 +47,7 @@ if (type === 'build') {
 } else if (type === 'run' || !type) {
   console.log('[MALEO] Running Application');
 
-  const serverPath = path.join(buildDirectory, 'server.js');
+  const serverPath = path.join(buildDirectory, 'server', 'server.js');
 
   const exec = spawn.bind(null, 'node', [serverPath], {
     stdio: 'inherit',

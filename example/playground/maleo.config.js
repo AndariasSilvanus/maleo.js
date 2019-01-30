@@ -4,5 +4,11 @@ const cssPlugin = require('@airy/maleo-css-plugin');
 module.exports = tsPlugin(
   cssPlugin({
     env: 'production',
+    // analyzeBundle: true
+    // staticPages: {
+    //   '/detail': {
+    //     page: './src/Detail/index.tsx'
+    //   }
+    // }
   }),
 );

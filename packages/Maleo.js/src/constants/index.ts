@@ -28,3 +28,9 @@ export const MALEO_PROJECT_ROOT_NODE_MODULES: string = path.join(
 export const PROJECT_ROOT_NODE_MODULES: string = path.join(process.cwd(), 'node_modules');
 
 export const AUTODLL_PATH: string = './static/dll';
+
+export const MALEO_DOCUMENT_COMPONENT = '_document';
+
+export const MALEO_WRAP_COMPONENT = '_wrap';
+
+export const MALEO_APP_COMPONENT = '_app';
