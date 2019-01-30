@@ -117,7 +117,7 @@ export const createWebpackConfig = (context: Context, customConfig: CustomConfig
     bail: true,
     performance: { hints: false },
     resolve: {
-      extensions: ['.js', '.jsx', '.json'],
+      extensions: ['.js', '.jsx', '.json', '.ts', '.tsx'],
       alias,
       symlinks: true,
       modules: [
@@ -222,9 +222,9 @@ export const getDefaultEntry = (
 
   const createFileEntry = (filename: string): string => path.join(projectDir, filename);
 
-  const wrap: string[] = [createFileEntry(MALEO_WRAP_COMPONENT)];
-  const document: string[] = [createFileEntry(MALEO_DOCUMENT_COMPONENT)];
-  const app: string[] = [createFileEntry(MALEO_APP_COMPONENT)];
+  // const wrap: string[] = [createFileEntry(MALEO_WRAP_COMPONENT)];
+  // const document: string[] = [createFileEntry(MALEO_DOCUMENT_COMPONENT)];
+  // const app: string[] = [createFileEntry(MALEO_APP_COMPONENT)];
 
   if (isServer) {
     const customServerExist = fileExist(projectDir, 'server');

@@ -157,7 +157,7 @@ export const render = async ({ req, res, dir, renderPage = defaultRenderPage }: 
 };
 
 const getServerAssets = (): ServerAssets => {
-  const serverDir = path.join(process.cwd(), BUILD_DIR);
+  const serverDir = path.join(process.cwd(), BUILD_DIR, 'server');
   const assets = extractStats(serverDir);
 
   const serverRequiredAssets = assets.filter((a) => /(routes|document|wrap|app)/.test(a.name));
@@ -172,14 +172,61 @@ const getServerAssets = (): ServerAssets => {
 };
 
 export const renderStatic = async ({
+  // dir,
+  // routes,
   Document = DefaultDocument,
-  App = DefaultApp,
-  Wrap = DefaultWrap,
-  routes,
+  // App = DefaultApp,
+  // Wrap = DefaultWrap,
+  // renderPage = defaultRenderPage,
+  Page,
 }: RenderStaticParam) => {
-  // execute getInitialProps on App & Wrap
+  // const preloadScripts = await getPreloadScripts(dir, res);
+
+  // matching routes
+  // const matchedRoutes = matchingRoutes(routes, req.baseUrl);
+
+  // if (!matchedRoutes) {
+  //   res.status(404);
+  //   return;
+  // }
+
+  // get Wrap props & App props
+  // const ctx = { req, res };
+  // const wrapProps = await loadComponentProps(Wrap, ctx);
+  // const appProps = await loadComponentProps(App, ctx);
+
+  // execute getInitialProps on every matched component
+  // const { data, branch } = await loadInitialProps(matchedRoutes, {
+  //   req,
+  //   res,
+  //   ...wrapProps,
+  //   ...appProps,
+  // });
+
+  // setup Document component & renderToString to client
+
+  // const { route, match } = branch;
+
+  // if (match.path === '**') {
+  //   res.status(404);
+  // } else if (branch && route.redirectTo && match.path) {
+  //   res.redirect(301, req.originalUrl.replace(match.path, route.redirectTo));
+  //   return;
+  // }
+
+  // const { bundles, html } = await renderPage({
+  //   req,
+  //   Wrap,
+  //   App,
+  //   routes,
+  //   data,
+  //   props: { wrap: wrapProps, app: appProps },
+  // })();
 
   const html = renderToString(Page);
+
+  // Loads Loadable bundle first
+  // const scripts = [...bundles, ...preloadScripts];
 
   const docContext: DocumentContext = {
     data: {},

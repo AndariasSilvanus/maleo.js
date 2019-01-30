@@ -4,7 +4,7 @@ import path from 'path';
 import { StaticPages } from '@interfaces/build/IWebpackInterfaces';
 import { renderStatic } from '@server/render';
 import { requireRuntime } from '@utils/require';
-import { BUILD_DIR } from '@src/constants/index';
+import { BUILD_DIR } from '@constants/index';
 
 export const buildStatic = (staticPages: StaticPages, dir: string) => {
   Object.keys(staticPages).map((p) => {

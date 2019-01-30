@@ -4,9 +4,9 @@ export const REACT_LOADABLE_MANIFEST: string = 'react-loadable-manifest.json';
 
 export const USER_CUSTOM_CONFIG: string = 'maleo.config.js';
 
-export const SERVER_ENTRY_NAME: string = 'server.js';
+export const SERVER_ENTRY_NAME: string = 'server';
 
-export const CLIENT_ENTRY_NAME: string = 'client.js';
+export const CLIENT_ENTRY_NAME: string = 'client';
 
 export const ROUTES_ENTRY_NAME: string = 'maleo-routes.json';
 export const DOCUMENT_ENTRY_NAME: string = '_document.jsx';

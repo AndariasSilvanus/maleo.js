@@ -17,7 +17,6 @@ import { IOptions } from '@interfaces/server/IOptions';
 import { render } from './render';
 import { BUILD_DIR, SERVER_ASSETS_ROUTE } from '@constants/index';
 import { requireRuntime } from '@utils/require';
-import { AsyncRouteProps } from '@interfaces/render/IRender';
 import { getUserConfig } from '@build/index';
 
 export class Server {
@@ -29,11 +28,8 @@ export class Server {
   };
 
   constructor(options: IOptions) {
-    const defaultOptions = {
-      assetDir: path.resolve('.', BUILD_DIR, 'client'),
-      routes: requireRuntime(
-        path.resolve('.', BUILD_DIR, 'server', 'routes.js'),
-      ) as AsyncRouteProps[],
+    const defaultOptions: IOptions = {
+      routes: [],
       port: 8080,
 
       ...options,
@@ -61,6 +57,7 @@ export class Server {
       req,
       res,
       dir: customConfig.assetDir ? customConfig.assetDir : '',
+      routes: this.options.routes,
     });
 
     res.send(html);
@@ -70,7 +67,7 @@ export class Server {
     res.send('favicon.ico');
   };
 
-  private setupExpress = async () => {
+  private setupExpress = () => {
     this.app = express();
 
     // Setup for development HMR, etc
@@ -99,12 +96,12 @@ export class Server {
     });
 
     // asset serving
-    app.use(SERVER_ASSETS_ROUTE, express.static(this.options.assetDir as string));
+    app.use(SERVER_ASSETS_ROUTE, express.static(this.options.assetDir));
   };
 
   private setupDevServer = (app: Express) => {
     // Webpack Dev Server
-    const { getConfigs, getUserConfig } = requireRuntime(path.resolve(__dirname, '../build/index'));
+    const { getConfigs } = requireRuntime(path.resolve(__dirname, '../build/index'));
     const webpack = requireRuntime('webpack');
 
     const configs = getConfigs({ env: 'development' }, getUserConfig());
@@ -117,7 +114,9 @@ export class Server {
       stats: false,
       serverSideRender: true,
       hot: true,
-      writeToDisk: true,
+      writeToDisk: (filepath) => {
+        return /\.json$/.test(filepath);
+      },
       // @ts-ignore
       publicPath: clientCompiler.options.output.publicPath || WEBPACK_PUBLIC_PATH,
       watchOptions: { ignored },

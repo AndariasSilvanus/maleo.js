@@ -63,10 +63,6 @@ const compile = (configs: webpack.Configuration[], options: IBuildOptions) => {
 
   if (env === 'development') {
     webpackCompiler.run((err, stats) => {
-      if (typeof callback === 'function') {
-        return callback(err, stats);
-      }
-
       if (err || stats.hasErrors()) {
         console.log(
           'Webpack compile failed! Error:',
@@ -74,20 +70,22 @@ const compile = (configs: webpack.Configuration[], options: IBuildOptions) => {
         );
 
         return;
+      }
+      if (typeof callback === 'function') {
+        return callback(err, stats);
       }
     });
   } else {
     webpackCompiler.run((err: Error, stats: webpack.Stats) => {
-      if (typeof callback === 'function') {
-        return callback(err, stats);
-      }
-
       if (err || stats.hasErrors()) {
         console.log(
           'Webpack compile failed! Error:',
           err || stats.toString({ colors: true, all: false, errors: true, errorDetails: true }),
         );
         return;
+      }
+      if (typeof callback === 'function') {
+        return callback(err, stats);
       }
 
       console.log(
