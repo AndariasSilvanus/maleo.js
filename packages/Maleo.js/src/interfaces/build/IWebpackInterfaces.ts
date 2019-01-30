@@ -24,6 +24,16 @@ export interface CustomConfig {
   customApp?: string;
   customDocument?: string;
   routes?: string;
+  // static export
+  staticPages?: StaticPages;
+}
+
+export interface StaticPages {
+  [key: string]: StaticPage;
+}
+
+export interface StaticPage {
+  page: string; // path to targeted page
 }
 
 export type WebpackCustomConfigCallback = (customConfig: CustomConfig) => Configuration;

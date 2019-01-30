@@ -10,6 +10,7 @@ import {
   NoEmitOnErrorsPlugin,
   BannerPlugin,
 } from 'webpack';
+import fs from 'fs';
 
 // Webpack Optimizations Plugin
 import TerserPlugin from 'terser-webpack-plugin';
@@ -116,7 +117,7 @@ export const createWebpackConfig = (context: Context, customConfig: CustomConfig
     bail: true,
     performance: { hints: false },
     resolve: {
-      extensions: ['.js', '.jsx', '.json'],
+      extensions: ['.js', '.jsx', '.json', '.ts', '.tsx'],
       alias,
       symlinks: true,
       modules: [
@@ -207,6 +208,23 @@ export const getDefaultEntry = (
   const { isServer, projectDir, isDev } = context;
 
   const { routes, document, wrap, app } = getStaticEntries(context, customConfig);
+
+  const checkFileExist = (filename: string): boolean => {
+    const extensions: string[] = ['.js', '.jsx', '.ts', '.tsx'];
+    let found = false;
+    extensions.map((e) => {
+      if (fs.existsSync(path.join(projectDir, `${filename}${e}`))) {
+        found = true;
+      }
+    });
+    return found;
+  };
+
+  const createFileEntry = (filename: string): string => path.join(projectDir, filename);
+
+  // const wrap: string[] = [createFileEntry(MALEO_WRAP_COMPONENT)];
+  // const document: string[] = [createFileEntry(MALEO_DOCUMENT_COMPONENT)];
+  // const app: string[] = [createFileEntry(MALEO_APP_COMPONENT)];
 
   if (isServer) {
     const customServerExist = fileExist(projectDir, 'server');
@@ -514,7 +532,7 @@ export const getDefaultOutput = (
     return {
       filename: '[name].js',
       chunkFilename: '[name].js',
-      path: path.resolve(projectDir, buildDirectory),
+      path: path.resolve(projectDir, buildDirectory, 'server'),
 
       library: '[name]',
       libraryTarget: 'commonjs2',
@@ -528,6 +546,7 @@ export const getDefaultOutput = (
     chunkFilename: isDev ? '[name].js' : '[name]-[hash].js',
     filename: isDev ? '[name].js' : '[name]-[hash].js',
     library: '[name]',
+    // libraryTarget: 'commonjs2',
 
     // hotUpdateChunkFilename: 'hot/hot-update.js',
     // hotUpdateMainFilename: 'hot/hot-update.json',
@@ -550,6 +569,8 @@ export const loadUserConfig = (dir: string, quiet?: boolean): CustomConfig => {
         ...defaultUserConfig,
         ...userConfig,
       };
+    } else {
+      console.log('[User didnt define their own config]');
     }
 
     return defaultUserConfig;
@@ -558,6 +579,8 @@ export const loadUserConfig = (dir: string, quiet?: boolean): CustomConfig => {
       // tslint:disable-next-line:no-unused-expression
       !quiet && console.log('[Webpack] Using Default Config');
     }
+    console.log('[ERROR] Error occured when system tried to get user config, error:', err);
+
     return defaultUserConfig;
   }
 };

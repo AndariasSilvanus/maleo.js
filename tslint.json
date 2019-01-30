@@ -14,7 +14,7 @@
         "only-arrow-functions": false,
         "trailing-comma": true,
         "space-within-parens": true,
-        "array-type": [true, "array-simple"],
+        "array-type": [true, "array"],
         "prefer-object-spread": true,
         "class-name": false,
         "curly": true,
