@@ -12,6 +12,7 @@ import { matchingRoutes } from './routeHandler';
 import {
   RenderParam,
   RenderPageParams,
+  RenderStaticParam,
   LoadableBundles,
   DocumentContext,
   ServerAssets,
@@ -31,12 +32,18 @@ export const defaultRenderPage = ({ req, Wrap, App, routes, data, props }: Rende
 
     // get required bundles from react-loadable.json
     const modules: string[] = [];
-    const reportResults = (moduleName) => modules.push(moduleName);
+    const reportResults = (moduleName) => {
+      modules.push(moduleName);
+    };
 
     // execute getInitialProps in Wrap and App component
     const wrapProps = props && props.wrap ? props.wrap : {};
     const appProps = props && props.app ? props.app : {};
 
+    await Loadable.preloadAll(); // Make sure all dynamic imports are loaded
+
+    // in SSR, we need to manually define location object
+    // to be passed in App because withRouter doesn't work on server side
     const asyncOrSyncRender = renderer(
       <Loadable.Capture report={reportResults}>
         <Wrap location={req.originalUrl} context={appContext} server {...wrapProps}>
@@ -53,17 +60,15 @@ export const defaultRenderPage = ({ req, Wrap, App, routes, data, props }: Rende
 
     try {
       reactLoadableJson = await requireDynamic(
-        path.resolve('.maleo', 'client', REACT_LOADABLE_MANIFEST),
+        path.resolve(BUILD_DIR, 'client', REACT_LOADABLE_MANIFEST),
       );
     } catch (error) {}
 
     const bundles: LoadableBundles[] = getBundles(reactLoadableJson, modules)
-      // removes falsy value
-      .filter(Boolean)
-      // removes .map files
-      .filter((b) => b.file.endsWith('.js'))
-      // maps to readable bundle array
+      .filter(Boolean) // removes falsy value
+      .filter((b) => b.file.endsWith('.js')) // removes .map files
       .map((bundle) => ({
+        // maps to readable bundle array
         name: bundle.name,
         filename: bundle.file,
       }));
@@ -88,7 +93,7 @@ export const render = async ({ req, res, dir, renderPage = defaultRenderPage }: 
   }
 
   // matching routes
-  const matchedRoutes = matchingRoutes(routes, req.baseUrl);
+  const matchedRoutes = matchingRoutes(routes, req.originalUrl);
 
   if (!matchedRoutes) {
     res.status(404);
@@ -164,4 +169,73 @@ const getServerAssets = (): ServerAssets => {
     }),
     {},
   ) as ServerAssets;
+};
+
+export const renderStatic = async ({
+  // dir,
+  // routes,
+  Document = DefaultDocument,
+  // App = DefaultApp,
+  // Wrap = DefaultWrap,
+  // renderPage = defaultRenderPage,
+  Page,
+}: RenderStaticParam) => {
+  // const preloadScripts = await getPreloadScripts(dir, res);
+
+  // matching routes
+  // const matchedRoutes = matchingRoutes(routes, req.baseUrl);
+
+  // if (!matchedRoutes) {
+  //   res.status(404);
+  //   return;
+  // }
+
+  // get Wrap props & App props
+  // const ctx = { req, res };
+  // const wrapProps = await loadComponentProps(Wrap, ctx);
+  // const appProps = await loadComponentProps(App, ctx);
+
+  // execute getInitialProps on every matched component
+  // const { data, branch } = await loadInitialProps(matchedRoutes, {
+  //   req,
+  //   res,
+  //   ...wrapProps,
+  //   ...appProps,
+  // });
+
+  // setup Document component & renderToString to client
+
+  // const { route, match } = branch;
+
+  // if (match.path === '**') {
+  //   res.status(404);
+  // } else if (branch && route.redirectTo && match.path) {
+  //   res.redirect(301, req.originalUrl.replace(match.path, route.redirectTo));
+  //   return;
+  // }
+
+  // const { bundles, html } = await renderPage({
+  //   req,
+  //   Wrap,
+  //   App,
+  //   routes,
+  //   data,
+  //   props: { wrap: wrapProps, app: appProps },
+  // })();
+
+  const html = renderToString(Page);
+
+  // Loads Loadable bundle first
+  // const scripts = [...bundles, ...preloadScripts];
+
+  const docContext: DocumentContext = {
+    data: {},
+    branch: null,
+    preloadScripts: [],
+    html,
+  };
+
+  const initialProps = await Document.getInitialProps(docContext);
+
+  return renderToString(<Document {...initialProps} />);
 };

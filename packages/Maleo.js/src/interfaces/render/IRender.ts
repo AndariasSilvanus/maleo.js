@@ -80,9 +80,12 @@ export type AsyncRouteableComponent<Props = any> =
 
 export interface AsyncRouteProps<Props = any> extends RouteProps {
   key?: string;
-  routes?: Array<AsyncRouteProps<Props>>;
+  routes?: AsyncRouteProps<Props>[];
   redirectTo?: string;
   component: AsyncRouteableComponent<Props>;
+  path?: string;
+  exact?: boolean;
+  render?: (arg: any) => AsyncRouteableComponent;
 }
 
 export interface InitialProps {
@@ -131,4 +134,9 @@ export interface ServerAssets {
   document: typeof React.Component;
   app: typeof React.Component;
   wrap: typeof React.Component;
+}
+
+export interface RenderStaticParam {
+  Document?: typeof React.Component;
+  Page: React.Component;
 }

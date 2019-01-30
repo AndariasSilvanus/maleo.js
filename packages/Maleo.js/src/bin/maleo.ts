@@ -39,7 +39,7 @@ const userConfig = loadUserConfig(projectPath, true);
 const buildDirectory = userConfig.buildDir || BUILD_DIR;
 
 // Generating server execution
-const serverPath = path.join(buildDirectory, 'server.js');
+const serverPath = path.join(buildDirectory, 'server', 'server.js');
 const exec = spawn.bind(null, 'node', [serverPath], {
   stdio: 'inherit',
 });
