@@ -50,8 +50,8 @@ import {
   BuildContext,
   WebpackCustomConfigCallback,
 } from '@interfaces/build/IWebpackInterfaces';
-import { requireRuntime } from '@utils/require';
 import { fileExist } from '@utils/index';
+import { requireFile } from '@utils/require';
 
 // Default Config if user doesn't have maleo.config.js
 const defaultUserConfig: CustomConfig = {
@@ -60,6 +60,8 @@ const defaultUserConfig: CustomConfig = {
   sourceMaps: true,
   analyzeBundle: false,
   buildDir: BUILD_DIR,
+  assetDir: path.resolve('.', BUILD_DIR, 'client'),
+  distDir: path.resolve('.', 'dist'),
 };
 
 export const createWebpackConfig = (context: Context, customConfig: CustomConfig) => {
@@ -559,30 +561,13 @@ export const getDefaultOutput = (
 export const loadUserConfig = (dir: string, quiet?: boolean): CustomConfig => {
   const cwd: string = path.resolve(dir);
   const userConfigPath: string = path.resolve(cwd, USER_CUSTOM_CONFIG);
-  try {
-    const userConfig = requireRuntime(userConfigPath);
-
-    if (userConfig !== undefined) {
-      // tslint:disable-next-line:no-unused-expression quotemark
-      !quiet && console.log("[Webpack] Using user's config");
-      return {
+  const userConfig = requireFile(userConfigPath);
+  return userConfig
+    ? {
         ...defaultUserConfig,
         ...userConfig,
-      };
-    } else {
-      console.log('[User didnt define their own config]');
-    }
-
-    return defaultUserConfig;
-  } catch (err) {
-    if (err.code !== 'MODULE_NOT_FOUND') {
-      // tslint:disable-next-line:no-unused-expression
-      !quiet && console.log('[Webpack] Using Default Config');
-    }
-    console.log('[ERROR] Error occured when system tried to get user config, error:', err);
-
-    return defaultUserConfig;
-  }
+      }
+    : defaultUserConfig;
 };
 
 /**
