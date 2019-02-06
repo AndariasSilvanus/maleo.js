@@ -5,9 +5,15 @@ import Loadable from 'react-loadable';
 import { getBundles } from 'react-loadable/webpack';
 import { Response } from 'express';
 
-import { REACT_LOADABLE_MANIFEST, BUILD_DIR } from '@src/constants';
+import {
+  REACT_LOADABLE_MANIFEST,
+  BUILD_DIR,
+  MALEO_DOCUMENT_COMPONENT,
+  MALEO_WRAP_COMPONENT,
+  MALEO_APP_COMPONENT,
+} from '@src/constants/index';
 import { isPromise } from '@utils/index';
-import { requireDynamic, requireRuntime } from '@utils/require';
+import { requireDynamic, requireRuntime, requireFile } from '@utils/require';
 import { loadInitialProps, loadComponentProps } from './loadInitialProps';
 import { matchingRoutes } from './routeHandler';
 import {
@@ -118,16 +124,27 @@ export const defaultRenderPage = ({ req, Wrap, App, routes, data, props }: Rende
   };
 };
 
+const getComponent = (
+  dirPath: string,
+  fileName: string,
+  defaultComponent: typeof React.Component,
+): typeof React.Component => {
+  const filepath = path.resolve(dirPath, fileName);
+  const file = requireFile(filepath);
+  return file ? file : defaultComponent;
+};
+
 export const render = async ({
   req,
   res,
   dir,
   routes,
-  Document = DefaultDocument,
-  App = DefaultApp,
-  Wrap = DefaultWrap,
   renderPage = defaultRenderPage,
 }: RenderParam) => {
+  const Document = getComponent(dir, MALEO_DOCUMENT_COMPONENT, DefaultDocument);
+  const App = getComponent(dir, MALEO_APP_COMPONENT, DefaultApp);
+  const Wrap = getComponent(dir, MALEO_WRAP_COMPONENT, DefaultWrap);
+
   const preloadScripts = await getPreloadScripts(dir, res);
 
   // matching routes
@@ -193,61 +210,14 @@ export const render = async ({
 };
 
 export const renderStatic = async ({
-  // dir,
-  // routes,
   Document = DefaultDocument,
-  // App = DefaultApp,
-  // Wrap = DefaultWrap,
-  // renderPage = defaultRenderPage,
-  Page,
+  App = DefaultApp,
+  Wrap = DefaultWrap,
+  routes,
 }: RenderStaticParam) => {
-  // const preloadScripts = await getPreloadScripts(dir, res);
-
-  // matching routes
-  // const matchedRoutes = matchingRoutes(routes, req.baseUrl);
-
-  // if (!matchedRoutes) {
-  //   res.status(404);
-  //   return;
-  // }
-
-  // get Wrap props & App props
-  // const ctx = { req, res };
-  // const wrapProps = await loadComponentProps(Wrap, ctx);
-  // const appProps = await loadComponentProps(App, ctx);
-
-  // execute getInitialProps on every matched component
-  // const { data, branch } = await loadInitialProps(matchedRoutes, {
-  //   req,
-  //   res,
-  //   ...wrapProps,
-  //   ...appProps,
-  // });
-
-  // setup Document component & renderToString to client
-
-  // const { route, match } = branch;
-
-  // if (match.path === '**') {
-  //   res.status(404);
-  // } else if (branch && route.redirectTo && match.path) {
-  //   res.redirect(301, req.originalUrl.replace(match.path, route.redirectTo));
-  //   return;
-  // }
-
-  // const { bundles, html } = await renderPage({
-  //   req,
-  //   Wrap,
-  //   App,
-  //   routes,
-  //   data,
-  //   props: { wrap: wrapProps, app: appProps },
-  // })();
+  // execute getInitialProps on App & Wrap
 
   const html = renderToString(Page);
-
-  // Loads Loadable bundle first
-  // const scripts = [...bundles, ...preloadScripts];
 
   const docContext: DocumentContext = {
     data: {},
