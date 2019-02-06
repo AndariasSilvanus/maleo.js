@@ -1,15 +1,8 @@
 import React from 'react';
 import Dynamic from '@airy/maleo/lib/utils/dynamicImport';
-
 import { RoomsMainApp } from './src/MainApp';
 
 const Loading = () => <div>Loading ...</div>;
-
-// console.log('Loading', Loading, Loading.prototype, typeof Loading);
-// console.log('RoomsMainApp', RoomsMainApp, RoomsMainApp.prototype, typeof RoomsMainApp);
-// console.log('Dynamic Component', (() => import('./src/Detail')).prototype);
-
-// import Dynamic from 'react-loadable'
 
 const RoomsSearch = Dynamic({
   loader: () => import('./src/Search'),
@@ -22,9 +15,6 @@ const RoomsDetail = Dynamic({
   loading: Loading,
   modules: ['./src/Detail'],
 });
-
-// import { RoomsDetail } from 'src/Detail';
-// import { RoomsSearch } from 'src/Search';
 
 export const routes = [
   {

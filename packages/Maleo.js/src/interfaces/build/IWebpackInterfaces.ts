@@ -24,6 +24,9 @@ export interface CustomConfig {
   customApp?: string;
   customDocument?: string;
   routes?: string;
+  distDir?: string;
+  assetDir?: string;
+
   // static export
   staticPages?: StaticPages;
 }
