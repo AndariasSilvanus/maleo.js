@@ -138,5 +138,8 @@ export interface ServerAssets {
 
 export interface RenderStaticParam {
   Document?: typeof React.Component;
+  Wrap?: typeof React.Component;
+  App?: typeof React.Component;
   Page: React.Component;
+  routes: AsyncRouteProps[];
 }
