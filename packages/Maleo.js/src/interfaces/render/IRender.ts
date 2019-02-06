@@ -104,7 +104,7 @@ export interface Branch {
 export interface RenderParam {
   req: Request;
   res: Response;
-  dir: string;
+  dir: string; // asset dir
   routes: AsyncRouteProps[];
   // Document?: React.ReactElement<DocumentProps>;
   // App?: React.ReactElement<AppProps>;
@@ -137,5 +137,8 @@ export type ModPageFn = <Props>(
 
 export interface RenderStaticParam {
   Document?: typeof React.Component;
+  Wrap?: typeof React.Component;
+  App?: typeof React.Component;
   Page: React.Component;
+  routes: AsyncRouteProps[];
 }

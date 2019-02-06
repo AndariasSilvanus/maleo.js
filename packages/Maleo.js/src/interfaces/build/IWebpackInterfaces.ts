@@ -20,6 +20,9 @@ export interface CustomConfig {
     next: WebpackCustomConfigCallback,
   ) => Configuration;
 
+  distDir?: string;
+  assetDir?: string;
+
   // static export
   staticPages?: StaticPages;
 }

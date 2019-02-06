@@ -17,6 +17,7 @@ import { IOptions } from '@interfaces/server/IOptions';
 import { render } from './render';
 import { BUILD_DIR, SERVER_ASSETS_ROUTE } from '@src/constants';
 import { requireRuntime } from '@utils/require';
+import { getUserConfig } from '@build/index';
 
 export class Server {
   app: Express;
@@ -27,13 +28,12 @@ export class Server {
   };
 
   constructor(options: IOptions) {
-    const defaultOptions = {
-      assetDir: path.resolve('.', BUILD_DIR, 'client'),
+    const defaultOptions: IOptions = {
       routes: [],
       port: 8080,
 
       ...options,
-    } as IOptions;
+    };
 
     this.options = defaultOptions;
 
@@ -52,14 +52,12 @@ export class Server {
   };
 
   routeHandler = async (req: Request, res: Response) => {
+    const customConfig = getUserConfig();
     const html = await render({
       req,
       res,
-      dir: this.options.assetDir,
+      dir: customConfig.assetDir ? customConfig.assetDir : '',
       routes: this.options.routes,
-      Document: this.options._document,
-      App: this.options._app,
-      Wrap: this.options._wrap,
     });
 
     res.send(html);
@@ -103,7 +101,7 @@ export class Server {
 
   private setupDevServer = (app: Express) => {
     // Webpack Dev Server
-    const { getConfigs, getUserConfig } = requireRuntime(path.resolve(__dirname, '../build/index'));
+    const { getConfigs } = requireRuntime(path.resolve(__dirname, '../build/index'));
     const webpack = requireRuntime('webpack');
 
     const configs = getConfigs({ env: 'development' }, getUserConfig());
