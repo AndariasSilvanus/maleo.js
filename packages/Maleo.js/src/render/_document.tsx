@@ -2,7 +2,7 @@ import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 
 import { HeaderProps, DocumentProps, DocumentContext } from '@interfaces/render/IRender';
-import { SERVER_INITIAL_DATA, DIV_MALEO_ID } from '@src/constants';
+import { SERVER_INITIAL_DATA, DIV_MALEO_ID } from '@src/constants/index';
 
 // Extendable document
 export class Document extends React.Component<DocumentProps, {}> {
