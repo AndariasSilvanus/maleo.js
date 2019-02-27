@@ -224,10 +224,6 @@ export const getDefaultEntry = (
 
   const createFileEntry = (filename: string): string => path.join(projectDir, filename);
 
-  // const wrap: string[] = [createFileEntry(MALEO_WRAP_COMPONENT)];
-  // const document: string[] = [createFileEntry(MALEO_DOCUMENT_COMPONENT)];
-  // const app: string[] = [createFileEntry(MALEO_APP_COMPONENT)];
-
   if (isServer) {
     const customServerExist = fileExist(projectDir, 'server');
     const serverEntry = customServerExist
