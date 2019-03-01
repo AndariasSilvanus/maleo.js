@@ -24,7 +24,7 @@ import rimraf from 'rimraf';
 import { spawn } from 'child_process';
 
 // Importing required bin dependencies
-import { build } from '@build/index';
+import { build, exportStatic } from '@build/index';
 import { loadUserConfig } from '@build/webpack/webpack';
 import { BUILD_DIR } from '@constants/index';
 
@@ -47,6 +47,9 @@ const exec = spawn.bind(null, 'node', [serverPath], {
 if (type === 'run') {
   console.log('[MALEO] Running Application');
   exec();
+} else if (type === 'export') {
+  console.log('[MALEO] Running static export');
+  exportStatic();
 } else {
   // Clean up the folder
   rimraf(path.join(projectPath, buildDirectory), {}, () => {

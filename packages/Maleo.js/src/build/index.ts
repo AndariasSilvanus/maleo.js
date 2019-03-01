@@ -39,20 +39,24 @@ export const getConfigs = (options: IBuildOptions, userConfig: CustomConfig): Co
 export const build = (options: IBuildOptions) => {
   const userConfig = getUserConfig();
 
-  // if user specify static page export, we need to build it parallelly alongside with webpack build
-  if (userConfig.staticPages) {
-    exportStatic(userConfig.staticPages);
-  }
-
   compile(getConfigs(options, userConfig), options);
 };
 
-const exportStatic = (staticPages: StaticPages) => {
-  try {
-    console.log('[STATIC] Starting to export static pages');
-    buildStatic(staticPages, cwd);
-  } catch (error) {
-    console.log('[STATIC] Error when tried to export static pages, error:', error);
+export const exportStatic = () => {
+  const userConfig = getUserConfig();
+
+  if (userConfig.staticPages) {
+    const staticPages: StaticPages = userConfig.staticPages;
+    try {
+      console.log('[STATIC] Starting to export static pages');
+      buildStatic(staticPages, cwd);
+    } catch (error) {
+      console.log('[STATIC] Error when tried to export static pages, error:', error);
+    }
+  } else {
+    console.log(
+      '[STATIC] Static export cannot be done. User did not define static field in maleo config',
+    );
   }
 };
 

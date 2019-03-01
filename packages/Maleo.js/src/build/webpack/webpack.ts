@@ -49,7 +49,7 @@ import {
   WebpackCustomConfigCallback,
 } from '@interfaces/build/IWebpackInterfaces';
 import { fileExist } from '@utils/index';
-import { requireFile } from '@utils/require';
+import { requireFile, requireRuntime } from '@utils/require';
 
 // Default Config if user doesn't have maleo.config.js
 const defaultUserConfig: CustomConfig = {
@@ -208,23 +208,6 @@ export const getDefaultEntry = (
   const { isServer, projectDir, isDev } = context;
 
   const { routes, document, wrap, app } = getStaticEntries(context, customConfig);
-
-  const checkFileExist = (filename: string): boolean => {
-    const extensions: string[] = ['.js', '.jsx', '.ts', '.tsx'];
-    let found = false;
-    extensions.map((e) => {
-      if (fs.existsSync(path.join(projectDir, `${filename}${e}`))) {
-        found = true;
-      }
-    });
-    return found;
-  };
-
-  const createFileEntry = (filename: string): string => path.join(projectDir, filename);
-
-  // const wrap: string[] = [createFileEntry(MALEO_WRAP_COMPONENT)];
-  // const document: string[] = [createFileEntry(MALEO_DOCUMENT_COMPONENT)];
-  // const app: string[] = [createFileEntry(MALEO_APP_COMPONENT)];
 
   if (isServer) {
     const customServerExist = fileExist(projectDir, 'server');
@@ -546,7 +529,7 @@ export const getDefaultOutput = (
 /**
  * Load User Config with file name USER_CUSTOM_CONFIG (maleo.config.js)
  */
-export const loadUserConfig = (dir: string, quiet?: boolean): CustomConfig => {
+export const loadUserConfig = (dir: string): CustomConfig => {
   const cwd: string = path.resolve(dir);
   const userConfigPath: string = path.resolve(cwd, USER_CUSTOM_CONFIG);
   const userConfig = requireFile(userConfigPath);
@@ -557,6 +540,33 @@ export const loadUserConfig = (dir: string, quiet?: boolean): CustomConfig => {
       }
     : defaultUserConfig;
 };
+// export const loadUserConfig = (dir: string): CustomConfig => {
+//   const cwd: string = path.resolve(dir);
+//   const userConfigPath: string = path.resolve(cwd, USER_CUSTOM_CONFIG);
+//   try {
+//     const userConfig = requireRuntime(userConfigPath);
+
+//     if (typeof userConfig !== 'undefined') {
+//       // tslint:disable-next-line:quotemark
+//       console.log("[Webpack] Using user's config");
+//       return {
+//         ...defaultUserConfig,
+//         ...userConfig,
+//       };
+//     } else {
+//       console.log('[User didnt define their own config]');
+//     }
+
+//     return defaultUserConfig;
+//   } catch (err) {
+//     if (err.code !== 'MODULE_NOT_FOUND') {
+//       console.log('[Webpack] Using Default Config');
+//     }
+//     console.log('[ERROR] Error occured when system tried to get user config, error:', err);
+
+//     return defaultUserConfig;
+//   }
+// };
 
 /**
  * Get Static Entries

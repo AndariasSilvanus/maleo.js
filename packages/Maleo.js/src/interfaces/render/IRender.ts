@@ -105,6 +105,7 @@ export interface RenderParam {
   req: Request;
   res: Response;
   dir: string;
+  isDev: boolean;
 
   renderPage?: (
     param: RenderPageParams,
@@ -113,8 +114,6 @@ export interface RenderParam {
 
 export interface RenderPageParams {
   req: Request;
-  // App?: React.ReactElement<AppProps>;
-  // Wrap?: React.ReactElement<any>;
   App: typeof React.Component;
   Wrap: typeof React.Component;
   routes: AsyncRouteProps[];
@@ -141,5 +140,5 @@ export interface RenderStaticParam {
   Wrap?: typeof React.Component;
   App?: typeof React.Component;
   Page: React.Component;
-  routes: AsyncRouteProps[];
+  routes?: AsyncRouteProps[];
 }

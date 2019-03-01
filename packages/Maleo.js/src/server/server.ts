@@ -60,7 +60,8 @@ export class Server {
     const html = await render({
       req,
       res,
-      dir: customConfig.assetDir ? customConfig.assetDir : '',
+      dir: this.options.assetDir,
+      isDev: __DEV__,
     });
 
     res.send(html);

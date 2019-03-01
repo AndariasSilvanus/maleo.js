@@ -44,10 +44,11 @@ export const defaultRenderPage = ({ req, Wrap, App, routes, data, props }: Rende
 
     // in SSR, we need to manually define location object
     // to be passed in App because withRouter doesn't work on server side
+    const location = req.originalUrl;
     const asyncOrSyncRender = renderer(
       <Loadable.Capture report={reportResults}>
-        <Wrap location={req.originalUrl} context={appContext} server {...wrapProps}>
-          <App {...{ routes, data, location: { pathname: req.originalUrl }, ...appProps }} />
+        <Wrap location={location} context={appContext} server {...wrapProps}>
+          <App {...{ routes, data, location: { pathname: location }, ...appProps }} />
         </Wrap>
       </Loadable.Capture>,
     );
@@ -78,11 +79,17 @@ export const defaultRenderPage = ({ req, Wrap, App, routes, data, props }: Rende
 };
 
 let preloadScripts: any[] = [];
-export const render = async ({ req, res, dir, renderPage = defaultRenderPage }: RenderParam) => {
+export const render = async ({
+  req,
+  res,
+  dir,
+  renderPage = defaultRenderPage,
+  isDev = false,
+}: RenderParam) => {
   const { document: Document, routes, wrap: Wrap, app: App } = getServerAssets();
 
   // sort preload with main last
-  if (__DEV__ || (!__DEV__ && !preloadScripts.length)) {
+  if (isDev || (!isDev && !preloadScripts.length)) {
     preloadScripts = extractStats(dir);
     const mainIndex = preloadScripts.findIndex((p) => /main/.test(p.filename));
     preloadScripts = [
@@ -169,26 +176,4 @@ const getServerAssets = (): ServerAssets => {
     }),
     {},
   ) as ServerAssets;
-};
-
-export const renderStatic = async ({
-  Document = DefaultDocument,
-  App = DefaultApp,
-  Wrap = DefaultWrap,
-  routes,
-}: RenderStaticParam) => {
-  // execute getInitialProps on App & Wrap
-
-  const html = renderToString(Page);
-
-  const docContext: DocumentContext = {
-    data: {},
-    branch: null,
-    preloadScripts: [],
-    html,
-  };
-
-  const initialProps = await Document.getInitialProps(docContext);
-
-  return renderToString(<Document {...initialProps} />);
 };
