@@ -59,6 +59,7 @@ export class Server {
       req,
       res,
       dir: this.options.assetDir,
+      isDev: __DEV__,
     });
 
     res.send(html);

@@ -15,6 +15,8 @@ export const APP_ENTRY_NAME: string = '_app.jsx';
 
 export const BUILD_DIR: string = '.maleo';
 
+export const STATIC_BUILD_DIR: string = path.join(BUILD_DIR, 'static');
+
 export const RUNTIME_CHUNK_FILE: string = 'static/runtime/webpack.js';
 
 export const SERVER_ASSETS_ROUTE: string = '/_assets/';
