@@ -19,7 +19,7 @@ export const buildStatic = async (staticPages: StaticPages, dir: string) => {
   }
 
   Object.keys(staticPages).map(async (p) => {
-    const html = await renderStatic({ location: p, dir: assetDir });
+    const html = await renderStatic(p, assetDir);
     const pageName = p.substring(1, p.length);
     const pathStaticDir = path.resolve(cwd, STATIC_BUILD_DIR, `${pageName}.html`);
 
@@ -33,7 +33,7 @@ export const buildStatic = async (staticPages: StaticPages, dir: string) => {
   });
 };
 
-export const renderStatic = async ({ location, dir }) => {
+export const renderStatic = async (location: string, dir: string) => {
   // @ts-ignore
   return await render({ req: { originalUrl: location }, dir, res: {} });
 };
