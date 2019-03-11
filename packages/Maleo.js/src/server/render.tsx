@@ -160,7 +160,18 @@ export const render = async ({
   }
 
   // TODO: add customizable error page
-  return 'error';
+  return defaultRenderErrorPage();
+};
+
+const defaultRenderErrorPage = () => {
+  return (
+    <html>
+      <head>
+        <title>Error</title>
+      </head>
+      <body>Error</body>
+    </html>
+  );
 };
 
 const getServerAssets = (): ServerAssets => {
