@@ -540,33 +540,6 @@ export const loadUserConfig = (dir: string): CustomConfig => {
       }
     : defaultUserConfig;
 };
-// export const loadUserConfig = (dir: string): CustomConfig => {
-//   const cwd: string = path.resolve(dir);
-//   const userConfigPath: string = path.resolve(cwd, USER_CUSTOM_CONFIG);
-//   try {
-//     const userConfig = requireRuntime(userConfigPath);
-
-//     if (typeof userConfig !== 'undefined') {
-//       // tslint:disable-next-line:quotemark
-//       console.log("[Webpack] Using user's config");
-//       return {
-//         ...defaultUserConfig,
-//         ...userConfig,
-//       };
-//     } else {
-//       console.log('[User didnt define their own config]');
-//     }
-
-//     return defaultUserConfig;
-//   } catch (err) {
-//     if (err.code !== 'MODULE_NOT_FOUND') {
-//       console.log('[Webpack] Using Default Config');
-//     }
-//     console.log('[ERROR] Error occured when system tried to get user config, error:', err);
-
-//     return defaultUserConfig;
-//   }
-// };
 
 /**
  * Get Static Entries
